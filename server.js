@@ -6,7 +6,11 @@ var express = require('express');
 var cors = require('cors');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var passport = require('passport');
+var cookieParser = require('cookie-parser');
 var app = express();
+
+mongoose.connect($config.mongo.url);
 
 var whitelistUrls = [];
 var optionObj = {
@@ -24,10 +28,11 @@ if ($config.env === 'production') {
 }
 
 
-app.use(cors(optionObj));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-mongoose.connect($config.mongo.url);
+app.use(cookieParser());
+app.use(passport.initialize());
 
 require('./routes')(app);
 
@@ -35,4 +40,4 @@ app.listen($config.port, function(){
   console.log("Listening on " + $config.port);
 });
 
-exports = module.exports = app;
+module.exports = app;
